@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 7 - Grades Table</title>
+    <style>
+        table {
+            width: 50%;
+            border-collapse: collapse;
+            margin: 20px auto;
+            text-align: center;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        tfoot {
+            font-weight: bold;
+        }
+        input {
+            margin: 5px;
+        }
+        #input-section {
+            text-align: center;
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="input-section">
+        <label for="math">Math Grade:</label>
+        <input type="number" id="math" placeholder="Enter Math grade" required>
+        <label for="english">English Grade:</label>
+        <input type="number" id="english" placeholder="Enter English grade" required>
+        <button id="submit">Submit</button>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Math</th>
+                <th>English</th>
+                <th>Average</th>
+            </tr>
+        </thead>
+        <tbody id="grades-body">
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="1"></td>
+                <td id="math-average">Math Avg: 0</td>
+                <td id="english-average">English Avg: 0</td>
+                <td id="overall-average">Overall Avg: 0</td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <script>
+        const mathInput = document.getElementById('math');
+        const englishInput = document.getElementById('english');
+        const submitButton = document.getElementById('submit');
+        const gradesBody = document.getElementById('grades-body');
+        const mathAverageCell = document.getElementById('math-average');
+        const englishAverageCell = document.getElementById('english-average');
+        const overallAverageCell = document.getElementById('overall-average');
+
+        const grades = [];
+
+        function calculateAverages() {
+            let mathTotal = 0;
+            let englishTotal = 0;
+            let overallTotal = 0;
+
+            grades.forEach(grade => {
+                mathTotal += grade.math;
+                englishTotal += grade.english;
+                overallTotal += grade.average;
+            });
+
+            const rowCount = grades.length;
+            mathAverageCell.textContent = `Math Avg: ${(mathTotal / rowCount || 0).toFixed(2)}`;
+            englishAverageCell.textContent = `English Avg: ${(englishTotal / rowCount || 0).toFixed(2)}`;
+            overallAverageCell.textContent = `Overall Avg: ${(overallTotal / rowCount || 0).toFixed(2)}`;
+        }
+
+        function addGradeRow(index, math, english, average) {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${index}</td>
+                <td>${math}</td>
+                <td>${english}</td>
+                <td>${average.toFixed(2)}</td>
+            `;
+            gradesBody.appendChild(row);
+        }
+
+        submitButton.addEventListener('click', () => {
+            const math = parseFloat(mathInput.value);
+            const english = parseFloat(englishInput.value);
+
+            if (isNaN(math) || isNaN(english)) {
+                alert('Please enter valid numbers for both grades.');
+                return;
+            }
+
+            const average = (math + english) / 2;
+            const index = grades.length + 1;
+
+            grades.push({ index, math, english, average });
+            addGradeRow(index, math, english, average);
+            calculateAverages();
+
+            mathInput.value = '';
+            englishInput.value = '';
+        });
+    </script>
+</body>
+</html>
